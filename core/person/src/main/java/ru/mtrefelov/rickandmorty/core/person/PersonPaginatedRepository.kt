@@ -1,6 +1,6 @@
 package ru.mtrefelov.rickandmorty.core.person
 
 interface PersonPaginatedRepository {
-    fun getPage(page: Int, action: (List<Person>) -> Unit)
+    suspend fun getPage(pageNumber: Int): List<Person>
     fun getLastPageNumber(): Int?
 }

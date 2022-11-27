@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 import ru.mtrefelov.rickandmorty.feature.episodes.databinding.FragmentEpisodesBinding
 
@@ -62,7 +64,9 @@ class EpisodesFragment : Fragment() {
         }
 
         val episodesIds = requireArguments().getIntArray(ARGUMENT_EPISODES_IDS)!!.toList()
-        viewModel.getEpisodes(episodesIds)
+        GlobalScope.launch {
+            viewModel.getEpisodes(episodesIds)
+        }
     }
 
     companion object {

@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 import ru.mtrefelov.rickandmorty.feature.people.databinding.FragmentPeopleBinding
 
@@ -47,10 +49,13 @@ class PeopleFragment(private val onPersonClicked: (String, List<Int>) -> Unit) :
         viewModel.characters.observe(viewLifecycleOwner) {
             with(peopleAdapter) {
                 setCharacters(it) {
-                    if (viewModel.state == State.PAGE_RECEIVED) {
+//                    if (viewModel.state == State.PAGE_RECEIVED) {
+                    if (viewModel.hasMorePages()) {
                         showLoadButton {
                             removeLoadButton {
-                                viewModel.getNextPage()
+                                GlobalScope.launch {
+                                    viewModel.getNextPage()
+                                }
                             }
                         }
                     }
@@ -58,8 +63,10 @@ class PeopleFragment(private val onPersonClicked: (String, List<Int>) -> Unit) :
             }
         }
 
-        if (viewModel.state == State.CLEAR) {
-            viewModel.getNextPage()
+        if (viewModel.isClear()) {
+            GlobalScope.launch {
+                viewModel.getNextPage()
+            }
         }
     }
 

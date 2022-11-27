@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="character_image_description">Character image</string>
+    <string name="gender_placeholder">Gender: %s</string>
+    <string name="load_button">Load more</string>
+    <string name="characters_toolbar">Rick and Morty Characters</string>
+</resources>

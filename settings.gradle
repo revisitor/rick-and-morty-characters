@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "Rick And Morty"
+include ':app'
+include ':feature:people'
+include ':feature:episodes'
+include ':core:person'
+include ':core:episode'
+include ':data:episode'
+include ':data:person'
+include ':lib:imageloader'
+include ':lib:network'

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="episodes_toolbar">Episodes of %s</string>
+    <string name="air_date_placeholder">Air date: %s</string>
+</resources>

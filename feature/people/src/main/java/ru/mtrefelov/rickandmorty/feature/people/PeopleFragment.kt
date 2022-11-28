@@ -1,5 +1,6 @@
 package ru.mtrefelov.rickandmorty.feature.people
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,24 +8,34 @@ import android.view.ViewGroup
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 import ru.mtrefelov.rickandmorty.feature.people.databinding.FragmentPeopleBinding
 
-class PeopleFragment(private val onPersonClicked: (String, List<Int>) -> Unit) : Fragment() {
-    private val viewModel: PeopleViewModel by viewModels()
+class PeopleFragment : Fragment() {
+    private lateinit var viewModel: PeopleViewModel
 
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+//    private var onPersonClicked: ((String, List<Int>) -> Unit)? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = createViewModel()
+    }
+
+    private fun createViewModel(): PeopleViewModel {
+        val container = requireActivity().application as PersonDependencyContainer
+        val factory = PeopleViewModel.Factory(container.getPersonRepository())
+        return ViewModelProvider(this, factory)[PeopleViewModel::class.java]
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPeopleBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -37,7 +48,11 @@ class PeopleFragment(private val onPersonClicked: (String, List<Int>) -> Unit) :
 
         val peopleAdapter = PeopleAdapter().apply {
             setOnCharacterClicked {
-                onPersonClicked(it.name, it.episodeIds)
+                val intent = Intent("ru.mtrefelov.rickandmorty.episodes.open")
+                    .putExtra("PERSON_NAME", it.name)
+                    .putExtra("PERSON_EPISODES_IDS", it.episodeIds.toIntArray())
+
+                requireActivity().startActivity(intent)
             }
         }
 
@@ -49,7 +64,6 @@ class PeopleFragment(private val onPersonClicked: (String, List<Int>) -> Unit) :
         viewModel.characters.observe(viewLifecycleOwner) {
             with(peopleAdapter) {
                 setCharacters(it) {
-//                    if (viewModel.state == State.PAGE_RECEIVED) {
                     if (viewModel.hasMorePages()) {
                         showLoadButton {
                             removeLoadButton {
@@ -74,4 +88,8 @@ class PeopleFragment(private val onPersonClicked: (String, List<Int>) -> Unit) :
         _binding = null
         super.onDestroyView()
     }
+//
+//    fun setOnPersonClicked(onPersonClicked: (String, List<Int>) -> Unit) {
+//        this.onPersonClicked = onPersonClicked
+//    }
 }

@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="ru.mtrefelov.rickandmorty.feature.characters" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.mtrefelov.rickandmorty.feature.people">
+
+    <application>
+        <activity
+            android:name=".PeopleActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ru.mtrefelov.rickandmorty.people.open" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

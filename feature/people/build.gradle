@@ -35,8 +35,8 @@ android {
 }
 
 dependencies {
-    implementation project(":core:person")
-    implementation project(":data:person")
+    api project(":core:person")
+    api project(":data:person")
     implementation project(":lib:imageloader")
 
     implementation 'androidx.core:core-ktx:1.9.0'

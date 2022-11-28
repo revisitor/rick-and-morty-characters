@@ -21,7 +21,7 @@ private val moshi = Moshi.Builder()
     .addLast(KotlinJsonAdapterFactory())
     .build()
 
-val retrofit = Retrofit.Builder()
+val retrofit: Retrofit = Retrofit.Builder()
     .baseUrl("https://rickandmortyapi.com/")
     .client(client)
     .addConverterFactory(MoshiConverterFactory.create(moshi))

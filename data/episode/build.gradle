@@ -9,6 +9,6 @@ java {
 }
 
 dependencies {
-    implementation project(path: ':core:episode')
+    api project(path: ':core:episode')
     implementation project(path: ':lib:network')
 }

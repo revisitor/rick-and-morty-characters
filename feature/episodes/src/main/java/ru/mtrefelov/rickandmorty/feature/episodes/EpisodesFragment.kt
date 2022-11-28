@@ -5,27 +5,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 import ru.mtrefelov.rickandmorty.feature.episodes.databinding.FragmentEpisodesBinding
 
 class EpisodesFragment : Fragment() {
+    private lateinit var viewModel: EpisodesViewModel
+
     private var _binding: FragmentEpisodesBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: EpisodesViewModel by viewModels()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = createViewModel()
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private fun createViewModel(): EpisodesViewModel {
+        val container = requireActivity().application as EpisodeDependencyContainer
+        val factory = EpisodesViewModel.Factory(container.getEpisodeRepository())
+        return ViewModelProvider(this, factory)[EpisodesViewModel::class.java]
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEpisodesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -33,18 +40,7 @@ class EpisodesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity).apply {
-            setSupportActionBar(binding.episodesToolbar)
-            onBackPressedDispatcher.addCallback(
-                viewLifecycleOwner,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        viewModel.clearEpisodes()
-                        remove()
-                        parentFragmentManager.popBackStack()
-                    }
-                })
-        }
+        (activity as AppCompatActivity).setSupportActionBar(binding.episodesToolbar)
 
         val episodesAdapter = EpisodesAdapter()
         binding.episodes.apply {
@@ -56,22 +52,19 @@ class EpisodesFragment : Fragment() {
             episodesAdapter.setEpisodes(it)
         }
 
+
         with(activity as AppCompatActivity) {
+            val args = intent!!
             supportActionBar!!.apply {
-                val name = requireArguments().getString(ARGUMENT_NAME)
+                val name = args.getStringExtra("PERSON_NAME")
                 title = resources.getString(R.string.episodes_toolbar, name)
             }
-        }
 
-        val episodesIds = requireArguments().getIntArray(ARGUMENT_EPISODES_IDS)!!.toList()
-        GlobalScope.launch {
-            viewModel.getEpisodes(episodesIds)
+            val episodesIds = args.getIntArrayExtra("PERSON_EPISODES_IDS")!!.toList()
+            GlobalScope.launch {
+                viewModel.getEpisodes(episodesIds)
+            }
         }
-    }
-
-    companion object {
-        const val ARGUMENT_EPISODES_IDS = "PERSON_EPISODES_IDS"
-        const val ARGUMENT_NAME = "PERSON_NAME"
     }
 
     override fun onDestroyView() {

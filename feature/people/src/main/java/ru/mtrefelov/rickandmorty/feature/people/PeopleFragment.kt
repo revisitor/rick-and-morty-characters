@@ -22,8 +22,6 @@ class PeopleFragment : Fragment() {
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
 
-//    private var onPersonClicked: ((String, List<Int>) -> Unit)? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = createViewModel()
@@ -88,8 +86,4 @@ class PeopleFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
-//
-//    fun setOnPersonClicked(onPersonClicked: (String, List<Int>) -> Unit) {
-//        this.onPersonClicked = onPersonClicked
-//    }
 }
